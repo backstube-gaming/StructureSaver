@@ -1,15 +1,15 @@
 {
   "item.structuresaver.structure_saver": "Structure Saver",
 
-  "block.structuresaver.extended_structure_block": "Structure Export Block",
-  "item.structuresaver.extended_structure_block": "Structure Export Block",
+  "block.structuresaver.structure_export_block": "Structure Export Block",
+  "item.structuresaver.structure_export_block": "Structure Export Block",
 
   "screen.structuresaver.structure_saver": "Structure Saver",
   "screen.structuresaver.select_template": "Please select a template",
 
   "generator.structuresaver.skyblock": "Skyblock",
-  "structuresaver.extended_structure_block.explanation": "Click 'Export' to save the structure\nfile to '/structuresaver_exports'",
-  "structuresaver.extended_structure_block.export": "EXPORT",
+  "structuresaver.structure_export_block.explanation": "Click 'Export' to save the structure\nfile to '/structuresaver_exports'",
+  "structuresaver.structure_export_block.export": "EXPORT",
 
   "structuresaver.command.argument.empty": "empty",
   "structuresaver.command.argument.enable": "enable",

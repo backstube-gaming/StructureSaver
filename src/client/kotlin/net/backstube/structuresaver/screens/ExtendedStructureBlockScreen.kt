@@ -84,7 +84,7 @@ class ExtendedStructureBlockScreen(private val handler: ExtendedStructureBlockSc
 
         this.buttonExport = addDrawableChild(
             ButtonWidget.builder(
-                Text.translatable("structuresaver.extended_structure_block.export")
+                Text.translatable("structuresaver.structure_export_block.export")
             ) { _: ButtonWidget? ->
                 this.updateStructureBlock(StructureBlockBlockEntity.Action.SAVE_AREA)
                 client!!.setScreen(null as Screen?)
@@ -302,7 +302,7 @@ class ExtendedStructureBlockScreen(private val handler: ExtendedStructureBlockSc
         inputSizeY!!.render(context, mouseX, mouseY, delta)
         inputSizeZ!!.render(context, mouseX, mouseY, delta)
 
-        val explanationLines = Text.translatable("structuresaver.extended_structure_block.explanation").string.split("\n");
+        val explanationLines = Text.translatable("structuresaver.structure_export_block.explanation").string.split("\n");
         for((index, line) in explanationLines.withIndex()){
             context.drawTextWithShadow(
                 this.textRenderer, Text.literal(line),

@@ -35,7 +35,7 @@ object StructureSaver : ModInitializer {
         public val ExtendedStructureBlockItem = BlockItem(ExtendedStructureBlock, FabricItemSettings())
         public val ExtendedStructureBlockEntityType: BlockEntityType<ExtendedStructureBlockEntity> = Registry.register(
             Registries.BLOCK_ENTITY_TYPE,
-            Identifier(MODID, "extended_structure_blockentity"),
+            Identifier(MODID, "structure_export_blockentity"),
             FabricBlockEntityTypeBuilder.create(::ExtendedStructureBlockEntity, ExtendedStructureBlock).build()
         )
     }
@@ -44,12 +44,12 @@ object StructureSaver : ModInitializer {
         Registry.register(Registries.ITEM, Identifier(MODID, "structure_saver"), Entries.StructureSaverItem)
         Registry.register(
             Registries.BLOCK,
-            Identifier(MODID, "extended_structure_block"),
+            Identifier(MODID, "structure_export_block"),
             Entries.ExtendedStructureBlock
         )
         Registry.register(
             Registries.ITEM,
-            Identifier(MODID, "extended_structure_blockitem"),
+            Identifier(MODID, "structure_export_blockitem"),
             Entries.ExtendedStructureBlockItem
         );
         ExtendedStructureBlockScreenHandler.register()

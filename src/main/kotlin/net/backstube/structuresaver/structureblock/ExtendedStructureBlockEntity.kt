@@ -49,7 +49,7 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
     }
 
     override fun getDisplayName(): Text {
-        return Text.translatable("block.structuresaver.extended_structure_block")
+        return Text.translatable("block.structuresaver.structure_export_block")
     }
 
     override fun writeScreenOpeningData(player: ServerPlayerEntity?, buf: PacketByteBuf) {
