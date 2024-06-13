@@ -1,4 +1,4 @@
-<img src="https://github.com/backstube-gaming/StructureSaver/blob/main/src/main/resources/assets/structuresaver/textures/block/structure_export_block.png" alt="drawing" width="100"/>
+<img src="https://github.com/backstube-gaming/StructureSaver/blob/main/structuresaver_icon_400.png" alt="drawing" width="100"/>
 
 Backstube - Structure Saver
 Designed to stream-line frequent changes to minecraft structures when developing them.
