@@ -1,0 +1,54 @@
+{
+	"schemaVersion": 1,
+	"id": "structuresaver",
+	"version": "${version}",
+	"name": "StructureSaver",
+	"description": "Mod that provides convenience features for structure export with auto backup and no block limit.",
+	"authors": [
+		"TheLyingCake"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": "https://https://github.com/backstube-gaming/StructureSaver"
+	},
+	"license": "MIT",
+	"icon": "assets/structuresaver/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "net.backstube.structuresaver.StructureSaver",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"value": "net.backstube.structuresaver.StructureSaverClient",
+				"adapter": "kotlin"
+			}
+		],
+		"fabric-datagen": [
+			{
+				"value": "net.backstube.structuresaver.StructureSaverDataGenerator",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"structuresaver.mixins.json",
+		{
+			"config": "structuresaver.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.3",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": ">=0.92.1",
+		"fabric-language-kotlin": ">=1.9.22"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
