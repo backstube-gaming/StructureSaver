@@ -15,6 +15,7 @@
   "structuresaver.structure_export_block.export": "EXPORT",
 
   "structuresaver.structure_loader_block.place": "Place",
+  "structuresaver.structure_loader_block.turn": "Rotate Placement",
 
   "structuresaver.command.argument.empty": "empty",
   "structuresaver.command.argument.enable": "enable",

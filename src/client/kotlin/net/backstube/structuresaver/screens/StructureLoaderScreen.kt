@@ -32,6 +32,7 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
 
     private var inputName: TextFieldWidget? = null
     private var buttonPlace: ButtonWidget? = null
+    private var buttonTurn: ButtonWidget? = null
     private var checkboxIncludeEntities: CheckboxWidget? = null
     private val decimalFormat: DecimalFormat = DecimalFormat("0.0###")
 
@@ -66,6 +67,17 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
                 this.updateStructureBlock(StructureBlockBlockEntity.Action.LOAD_AREA)
                 client!!.setScreen(null as Screen?)
             }.dimensions(this.width / 2 - 153, 174, 60, 20).build()
+        )
+
+        this.buttonTurn = addDrawableChild(
+            ButtonWidget.builder(
+                Text.translatable("structuresaver.structure_loader_block.turn")
+            ) { _: ButtonWidget? ->
+                handler.data.direction += 1;
+                if(handler.data.direction > 3)
+                    handler.data.direction = 0
+                this.updateStructureBlock(StructureBlockBlockEntity.Action.UPDATE_DATA)
+            }.dimensions(this.width / 2 - 153, 120, 110, 20).build()
         )
 
         this.addDrawableChild(
@@ -118,9 +130,7 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
         handler.saveToBlockEntity()
         MessageSender.updateStructureLoaderBlock(
             action,
-            handler.data.pos,
-            handler.data.name,
-            handler.data.shouldIncludeEntities
+            handler.data
         );
         return true
     }

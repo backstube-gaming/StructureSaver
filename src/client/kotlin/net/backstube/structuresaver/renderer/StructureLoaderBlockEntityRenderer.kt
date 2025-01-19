@@ -24,7 +24,7 @@ public class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.
 
 
     override fun render(
-        exportBlockEntity: StructureLoaderBlockEntity,
+        loaderBlockEntity: StructureLoaderBlockEntity,
         f: Float,
         matrixStack: MatrixStack?,
         vertexConsumerProvider: VertexConsumerProvider,
@@ -34,28 +34,56 @@ public class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.
         if (!MinecraftClient.getInstance().player!!.isCreativeLevelTwoOp && !MinecraftClient.getInstance().player!!.isSpectator) {
             return
         }
-        val blockPos = BlockPos(0,1,0)
+        val blockPos = BlockPos(0, 1, 0)
         val x = blockPos.x.toDouble()
         val y = blockPos.y.toDouble()
         val z = blockPos.z.toDouble()
+
+        val endpointX: Double
+        val endpointY: Double
+        val endpointZ: Double
+
+        when (loaderBlockEntity.data.direction) {
+            0 -> { // east-south
+                endpointX = 16.0
+                endpointY = 17.0
+                endpointZ = 16.0
+            }
+            1 -> { // west-south
+                endpointX = -16.0
+                endpointY = 17.0
+                endpointZ = 16.0
+            }
+            2 -> { // west-north
+                endpointX = -16.0
+                endpointY = 17.0
+                endpointZ = -16.0
+            }
+            else -> { // east-north
+                endpointX = 16.0
+                endpointY = 17.0
+                endpointZ = -16.0
+            }
+        }
+
         val vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getLines())
-            WorldRenderer.drawBox(
-                matrixStack,
-                vertexConsumer,
-                x,
-                y,
-                z,
-                x + 16,
-                y + 16,
-                z + 16,
-                0.9f,
-                0.9f,
-                0.9f,
-                1.0f,
-                0.5f,
-                0.5f,
-                0.5f
-            )
+        WorldRenderer.drawBox(
+            matrixStack,
+            vertexConsumer,
+            x,
+            y,
+            z,
+            endpointX,
+            endpointY,
+            endpointZ,
+            0.9f,
+            0.9f,
+            0.9f,
+            1.0f,
+            0.5f,
+            0.5f,
+            0.5f
+        )
     }
 
 

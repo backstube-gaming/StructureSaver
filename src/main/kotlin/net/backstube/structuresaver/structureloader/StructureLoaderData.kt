@@ -8,5 +8,5 @@ data class StructureLoaderData(
     var pos: BlockPos,
     var name: String,
     var shouldIncludeEntities: Boolean,
-    // var direction: Facing
+    var direction: Int
 )

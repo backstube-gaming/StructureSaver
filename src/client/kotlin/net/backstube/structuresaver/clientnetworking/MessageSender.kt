@@ -2,6 +2,7 @@ package net.backstube.structuresaver.clientnetworking
 
 import io.netty.buffer.Unpooled
 import net.backstube.structuresaver.networking.Packets
+import net.backstube.structuresaver.structureloader.StructureLoaderData
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.block.entity.StructureBlockBlockEntity
 import net.minecraft.item.ItemStack
@@ -48,14 +49,13 @@ object MessageSender {
     }
 
     fun updateStructureLoaderBlock(action: StructureBlockBlockEntity.Action,
-                                     pos: BlockPos?,
-                                     text: String?,
-                                     shouldIncludeEntities: Boolean) {
+                                     data: StructureLoaderData) {
         val passedData = PacketByteBuf(Unpooled.buffer())
         passedData.writeString(action.name)
-        passedData.writeBlockPos(pos)
-        passedData.writeString(text)
-        passedData.writeBoolean(shouldIncludeEntities)
+        passedData.writeBlockPos(data.pos)
+        passedData.writeString(data.name)
+        passedData.writeBoolean(data.shouldIncludeEntities)
+        passedData.writeInt(data.direction)
         ClientPlayNetworking.send(Packets.C2S_UPDATE_STRUCTURE_LOADER_BLOCK, passedData)
     }
 }

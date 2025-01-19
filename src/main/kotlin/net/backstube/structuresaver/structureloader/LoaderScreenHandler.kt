@@ -26,6 +26,7 @@ class LoaderScreenHandler(
         BlockPos.ORIGIN, // this should hopefully never be used
         "",
         shouldIncludeEntities = false,
+        direction = 0
     )
 
     companion object {
@@ -52,11 +53,13 @@ class LoaderScreenHandler(
             this.blockEntity = genericEntity
         val name = buf.readString()
         val shouldIncludeEntities = buf.readBoolean()
+        val direction = buf.readInt()
 
         data = StructureLoaderData(
             pos,
             name,
-            shouldIncludeEntities
+            shouldIncludeEntities,
+            direction
         )
     }
 
@@ -72,5 +75,6 @@ class LoaderScreenHandler(
         blockEntity?.data?.name = this.data.name
         blockEntity?.data?.shouldIncludeEntities = this.data.shouldIncludeEntities
         blockEntity?.data?.pos = this.data.pos
+        blockEntity?.data?.direction = this.data.direction
     }
 }

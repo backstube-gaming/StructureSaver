@@ -29,7 +29,8 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     public val data = StructureLoaderData(
         pos,
         "",
-        shouldIncludeEntities = true
+        shouldIncludeEntities = true,
+        direction = 0
         )
 
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
@@ -46,6 +47,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
         buf.writeBlockPos(data.pos)
         buf.writeString(data.name)
         buf.writeBoolean(data.shouldIncludeEntities)
+        buf.writeInt(data.direction)
     }
 
     override fun writeNbt(nbt: NbtCompound) {
@@ -54,6 +56,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
 
         nbt.putString("name", data.name)
         nbt.putBoolean("shouldIncludeEntities", data.shouldIncludeEntities)
+        nbt.putInt("direction", data.direction)
     }
 
     override fun readNbt(nbt: NbtCompound) {
@@ -61,6 +64,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
         this.author = nbt.getString("author")
         data.name =  nbt.getString("name")
         data.shouldIncludeEntities =  nbt.getBoolean("shouldIncludeEntities")
+        data.direction =  nbt.getInt("direction")
     }
 
     override fun toUpdatePacket(): BlockEntityUpdateS2CPacket? {

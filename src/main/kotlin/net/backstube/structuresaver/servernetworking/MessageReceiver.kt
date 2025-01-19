@@ -17,6 +17,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.structure.StructurePlacementData
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.text.Text
+import net.minecraft.util.BlockRotation
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3i
@@ -128,6 +129,7 @@ object MessageReceiver {
             val blockPos = buf.readBlockPos()
             val text = buf.readString()
             val shouldIncludeEntities = buf.readBoolean()
+            val direction = buf.readInt()
 
             server.execute {
                 val blockEntity = player.serverWorld.getBlockEntity(blockPos)
@@ -136,16 +138,39 @@ object MessageReceiver {
 
                 blockEntity.data.name = text
                 blockEntity.data.shouldIncludeEntities = shouldIncludeEntities
+                blockEntity.data.direction = direction
                 blockEntity.markDirty()
 
                 if (action == StructureBlockBlockEntity.Action.LOAD_AREA.name) {
+
+                    val rotation: BlockRotation
+                    when (blockEntity.data.direction) {
+                        0 -> { // east-south
+                            rotation = BlockRotation.NONE
+                        }
+
+                        1 -> { // west-south
+                            rotation = BlockRotation.CLOCKWISE_90
+                        }
+
+                        2 -> { // west-north
+                            rotation = BlockRotation.CLOCKWISE_180
+                        }
+
+                        else -> { // east-north
+                            rotation = BlockRotation.COUNTERCLOCKWISE_90
+                        }
+                    }
+
+
                     val structureId = Identifier(blockEntity.data.name)
                     val placementData = StructurePlacementData()
-                        .setPosition(BlockPos(0,0,0))
+                        .setPosition(BlockPos(0, 0, 0))
                         .setPlaceFluids(true)
                         .setIgnoreEntities(!blockEntity.data.shouldIncludeEntities)
                         .setUpdateNeighbors(false)
                         .setInitializeMobs(true)
+                        .setRotation(rotation)
 
                     player.sendMessage(Text.literal("Preparing to place structure $structureId at $blockPos ... (the server will not respond until finished)"))
                     val structure: Optional<StructureTemplate> = player.serverWorld.structureTemplateManager
@@ -154,20 +179,24 @@ object MessageReceiver {
                         player.sendMessage(Text.literal("Structure $structureId not found or empty"))
                         StructureSaver.logger.error("Structure '{}' not found or empty", structureId)
                         return@execute;
-                    }else{
+                    } else {
                         StructureSaver.logger.info("Structure '{}' template read successfully", structureId)
                     }
                     player.sendMessage(Text.literal("Placing structure $structureId at $blockPos ... (the server will not respond until finished)"))
                     val structureResult = structure.get()
                     val wasPlaced = structureResult.place(
-                        player.serverWorld, BlockPos(blockEntity.pos.x, blockEntity.pos.y, blockEntity.pos.z), BlockPos(0, 0, 0),
-                        placementData, StructureSaver.random, Block.NOTIFY_NEIGHBORS
+                        player.serverWorld,
+                        BlockPos(blockEntity.pos.x, blockEntity.pos.y, blockEntity.pos.z),
+                        BlockPos(0, 0, 0),
+                        placementData,
+                        StructureSaver.random,
+                        Block.NOTIFY_NEIGHBORS
                     )
 
                     if (wasPlaced) {
                         player.sendMessage(Text.literal("Structure $structureId was placed at $blockPos"))
                         StructureSaver.logger.info("Structure {} was placed at {}", structureId, blockPos)
-                    }else {
+                    } else {
                         player.sendMessage(Text.literal("Could not place structure $structureId"))
                         StructureSaver.logger.error("Could not place structure {}", structureId)
                     }
