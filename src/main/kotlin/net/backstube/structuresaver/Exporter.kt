@@ -2,6 +2,7 @@ package net.backstube.structuresaver
 
 import net.backstube.structuresaver.structuresaveritem.StructureSaverItem.Companion.writeTemplate
 import net.minecraft.block.Blocks
+import net.minecraft.block.StructureBlock
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.util.math.BlockPos

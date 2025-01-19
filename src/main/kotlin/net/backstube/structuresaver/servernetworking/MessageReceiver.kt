@@ -1,18 +1,26 @@
 package net.backstube.structuresaver.servernetworking
 
 import net.backstube.structuresaver.Exporter
-import net.backstube.structuresaver.structuresaveritem.StructureSaverItem
+import net.backstube.structuresaver.StructureSaver
 import net.backstube.structuresaver.networking.Packets
 import net.backstube.structuresaver.structureblock.ExtendedStructureBlockEntity
+import net.backstube.structuresaver.structureloader.StructureLoaderBlockEntity
+import net.backstube.structuresaver.structuresaveritem.StructureSaverItem
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.block.Block
 import net.minecraft.block.entity.StructureBlockBlockEntity
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.structure.StructurePlacementData
+import net.minecraft.structure.StructureTemplate
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3i
+import java.util.*
 
 object MessageReceiver {
     fun setupReceivers() {
@@ -105,6 +113,64 @@ object MessageReceiver {
                         shouldIncludeEntities, shouldIgnoreAir, shouldSaveOnServer, false
                     )
                     player.sendMessage(Text.literal("Saved to '$exportPath'"))
+                }
+            }
+        }
+
+        ServerPlayNetworking.registerGlobalReceiver(
+            Packets.C2S_UPDATE_STRUCTURE_LOADER_BLOCK
+        ) { server: MinecraftServer, player: ServerPlayerEntity, _: ServerPlayNetworkHandler?, buf: PacketByteBuf, _: PacketSender? ->
+            if (!player.isCreativeLevelTwoOp) {
+                player.sendMessage(Text.literal("Error: You need permission level 2"))
+                return@registerGlobalReceiver;
+            }
+            val action = buf.readString()
+            val blockPos = buf.readBlockPos()
+            val text = buf.readString()
+            val shouldIncludeEntities = buf.readBoolean()
+
+            server.execute {
+                val blockEntity = player.serverWorld.getBlockEntity(blockPos)
+                if (blockEntity !is StructureLoaderBlockEntity)
+                    return@execute
+
+                blockEntity.data.name = text
+                blockEntity.data.shouldIncludeEntities = shouldIncludeEntities
+                blockEntity.markDirty()
+
+                if (action == StructureBlockBlockEntity.Action.LOAD_AREA.name) {
+                    val structureId = Identifier(blockEntity.data.name)
+                    val placementData = StructurePlacementData()
+                        .setPosition(BlockPos(0,0,0))
+                        .setPlaceFluids(true)
+                        .setIgnoreEntities(!blockEntity.data.shouldIncludeEntities)
+                        .setUpdateNeighbors(false)
+                        .setInitializeMobs(true)
+
+                    player.sendMessage(Text.literal("Preparing to place structure $structureId at $blockPos ... (the server will not respond until finished)"))
+                    val structure: Optional<StructureTemplate> = player.serverWorld.structureTemplateManager
+                        .getTemplate(structureId)
+                    if (structure.isEmpty) {
+                        player.sendMessage(Text.literal("Structure $structureId not found or empty"))
+                        StructureSaver.logger.error("Structure '{}' not found or empty", structureId)
+                        return@execute;
+                    }else{
+                        StructureSaver.logger.info("Structure '{}' template read successfully", structureId)
+                    }
+                    player.sendMessage(Text.literal("Placing structure $structureId at $blockPos ... (the server will not respond until finished)"))
+                    val structureResult = structure.get()
+                    val wasPlaced = structureResult.place(
+                        player.serverWorld, BlockPos(blockEntity.pos.x, blockEntity.pos.y, blockEntity.pos.z), BlockPos(0, 0, 0),
+                        placementData, StructureSaver.random, Block.NOTIFY_NEIGHBORS
+                    )
+
+                    if (wasPlaced) {
+                        player.sendMessage(Text.literal("Structure $structureId was placed at $blockPos"))
+                        StructureSaver.logger.info("Structure {} was placed at {}", structureId, blockPos)
+                    }else {
+                        player.sendMessage(Text.literal("Could not place structure $structureId"))
+                        StructureSaver.logger.error("Could not place structure {}", structureId)
+                    }
                 }
             }
         }

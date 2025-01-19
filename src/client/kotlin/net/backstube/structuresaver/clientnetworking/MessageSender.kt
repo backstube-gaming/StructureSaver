@@ -46,4 +46,16 @@ object MessageSender {
         passedData.writeBoolean(shouldSaveOnServer)
         ClientPlayNetworking.send(Packets.C2S_UPDATE_EXTENDED_STRUCTURE_BLOCK, passedData)
     }
+
+    fun updateStructureLoaderBlock(action: StructureBlockBlockEntity.Action,
+                                     pos: BlockPos?,
+                                     text: String?,
+                                     shouldIncludeEntities: Boolean) {
+        val passedData = PacketByteBuf(Unpooled.buffer())
+        passedData.writeString(action.name)
+        passedData.writeBlockPos(pos)
+        passedData.writeString(text)
+        passedData.writeBoolean(shouldIncludeEntities)
+        ClientPlayNetworking.send(Packets.C2S_UPDATE_STRUCTURE_LOADER_BLOCK, passedData)
+    }
 }

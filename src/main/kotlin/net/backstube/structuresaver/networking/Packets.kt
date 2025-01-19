@@ -10,4 +10,7 @@ object Packets {
 
     public val S2C_OPEN_SCREEN = Identifier(StructureSaver.MODID, "open_screen")
     public val S2C_INIT_EXTENDED_STRUCTURE_BLOCK = Identifier(StructureSaver.MODID, "init_structure_export_block")
+
+
+    public val C2S_UPDATE_STRUCTURE_LOADER_BLOCK = Identifier(StructureSaver.MODID, "update_structure_loader_block")
 }

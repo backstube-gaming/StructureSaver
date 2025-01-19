@@ -1,0 +1,70 @@
+package net.backstube.structuresaver.renderer;
+
+import net.backstube.structuresaver.structureblock.ExtendedStructureBlockEntity
+import net.backstube.structuresaver.structureloader.StructureLoaderBlockEntity
+import net.minecraft.block.entity.StructureBlockBlockEntity
+import net.minecraft.block.enums.StructureBlockMode
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.render.WorldRenderer
+import net.minecraft.client.render.block.entity.BlockEntityRenderer
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory
+import net.minecraft.client.render.block.entity.StructureBlockBlockEntityRenderer
+import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.util.BlockMirror
+import net.minecraft.util.BlockRotation
+import net.minecraft.util.math.BlockPos
+
+/*
+* Copy of Vanilla class to show bounding box
+*/
+public class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
+    BlockEntityRenderer<StructureLoaderBlockEntity> {
+
+
+    override fun render(
+        exportBlockEntity: StructureLoaderBlockEntity,
+        f: Float,
+        matrixStack: MatrixStack?,
+        vertexConsumerProvider: VertexConsumerProvider,
+        i: Int,
+        j: Int
+    ) {
+        if (!MinecraftClient.getInstance().player!!.isCreativeLevelTwoOp && !MinecraftClient.getInstance().player!!.isSpectator) {
+            return
+        }
+        val blockPos = BlockPos(0,1,0)
+        val x = blockPos.x.toDouble()
+        val y = blockPos.y.toDouble()
+        val z = blockPos.z.toDouble()
+        val vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getLines())
+            WorldRenderer.drawBox(
+                matrixStack,
+                vertexConsumer,
+                x,
+                y,
+                z,
+                x + 16,
+                y + 16,
+                z + 16,
+                0.9f,
+                0.9f,
+                0.9f,
+                1.0f,
+                0.5f,
+                0.5f,
+                0.5f
+            )
+    }
+
+
+    override fun rendersOutsideBoundingBox(structureBlockBlockEntity: StructureLoaderBlockEntity?): Boolean {
+        return true
+    }
+
+    override fun getRenderDistance(): Int {
+        return 2048
+    }
+}
+

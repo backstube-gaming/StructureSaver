@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "structuresaver:block/structure_loader_block"
+    }
+  }
+}
