@@ -3,7 +3,6 @@ package net.backstube.structuresaver.screens
 import net.backstube.structuresaver.StructureSaver
 import net.backstube.structuresaver.Translations
 import net.backstube.structuresaver.clientnetworking.MessageSender
-import net.backstube.structuresaver.structureblock.ExtendedStructureBlockScreenHandler
 import net.backstube.structuresaver.structureloader.LoaderScreenHandler
 import net.minecraft.block.entity.StructureBlockBlockEntity
 import net.minecraft.client.MinecraftClient
@@ -16,9 +15,6 @@ import net.minecraft.client.gui.widget.CheckboxWidget
 import net.minecraft.client.gui.widget.TextFieldWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
-import net.minecraft.util.math.Vec3i
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*

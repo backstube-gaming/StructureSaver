@@ -21,3 +21,6 @@ This mod adds:
 
 This mod was created to supply one of my upcoming mods with a more convenient toolset to create Minecraft structures with no block limit.
 However, the mod is independent and can be used standalone as well.
+
+Roadmap:
+- change Structure Saver to set size in Exporter block instead. R-click Exporter, right click outer corner

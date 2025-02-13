@@ -41,7 +41,6 @@ class StructureLoaderBlock(settings: Settings?) : BlockWithEntity(settings), Ope
         world: World,
         pos: BlockPos?,
         player: PlayerEntity?,
-        hand: Hand?,
         hit: BlockHitResult?
     ): ActionResult {
         if (player == null)

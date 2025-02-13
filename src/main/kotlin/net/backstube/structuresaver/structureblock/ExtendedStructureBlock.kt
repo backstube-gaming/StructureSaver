@@ -43,7 +43,6 @@ class ExtendedStructureBlock(settings: Settings?) : BlockWithEntity(settings), O
         world: World,
         pos: BlockPos?,
         player: PlayerEntity?,
-        hand: Hand?,
         hit: BlockHitResult?
     ): ActionResult {
         if (player == null)

@@ -10,7 +10,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.text.Text
 
 object MessageReceiver {
-    fun setupReceivers() {
+   /* fun setupReceivers() {
         ClientPlayNetworking.registerGlobalReceiver(Packets.S2C_OPEN_SCREEN
         ) { client: MinecraftClient, handler: ClientPlayNetworkHandler?, buf: PacketByteBuf, responseSender: PacketSender? ->
             val item = buf.readItemStack()
@@ -18,5 +18,5 @@ object MessageReceiver {
                 MinecraftClient.getInstance().setScreen(StructureSaverScreen(item, Text.translatable("screen.structuresaver.structure_saver")))
             }
         }
-    }
+    }*/
 }

@@ -8,9 +8,8 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket
-import net.minecraft.screen.ArrayPropertyDelegate
+import net.minecraft.registry.RegistryWrapper
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -22,36 +21,29 @@ import net.minecraft.util.math.random.Random
  * Copy of Vanilla Structure Block with no range limitation and no corner mode
  */
 class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
-    BlockEntity(StructureLoaderBlockEntityType, pos, state), ExtendedScreenHandlerFactory {
+    BlockEntity(StructureLoaderBlockEntityType, pos, state), ExtendedScreenHandlerFactory<StructureLoaderData> {
 
     private var author = ""
-
-    public val data = StructureLoaderData(
-        pos,
-        "",
-        shouldIncludeEntities = true,
-        direction = 0
-        )
+    public val data = getInitialData()
 
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
         // only the server has the property delegate at first
         // the client will start with an empty one and then sync
-        return LoaderScreenHandler(syncId, PlayerInventory(player), this.pos, this, ArrayPropertyDelegate(0))
+        val data = getInitialData();
+        data.pos = this.pos;
+        return LoaderScreenHandler(syncId, PlayerInventory(player), data)
     }
 
     override fun getDisplayName(): Text {
         return Text.translatable("block.structuresaver.structure_loader_block")
     }
 
-    override fun writeScreenOpeningData(player: ServerPlayerEntity?, buf: PacketByteBuf) {
-        buf.writeBlockPos(data.pos)
-        buf.writeString(data.name)
-        buf.writeBoolean(data.shouldIncludeEntities)
-        buf.writeInt(data.direction)
+    override fun getScreenOpeningData(player: ServerPlayerEntity?): StructureLoaderData {
+        return data;
     }
 
-    override fun writeNbt(nbt: NbtCompound) {
-        super.writeNbt(nbt)
+    override fun writeNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
+        super.writeNbt(nbt, registryLookup)
         nbt.putString("author", this.author)
 
         nbt.putString("name", data.name)
@@ -59,20 +51,16 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
         nbt.putInt("direction", data.direction)
     }
 
-    override fun readNbt(nbt: NbtCompound) {
-        super.readNbt(nbt)
+    override fun readNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
+        super.readNbt(nbt, registryLookup)
         this.author = nbt.getString("author")
-        data.name =  nbt.getString("name")
-        data.shouldIncludeEntities =  nbt.getBoolean("shouldIncludeEntities")
-        data.direction =  nbt.getInt("direction")
+        data.name = nbt.getString("name")
+        data.shouldIncludeEntities = nbt.getBoolean("shouldIncludeEntities")
+        data.direction = nbt.getInt("direction")
     }
 
     override fun toUpdatePacket(): BlockEntityUpdateS2CPacket? {
         return BlockEntityUpdateS2CPacket.create(this)
-    }
-
-    override fun toInitialChunkDataNbt(): NbtCompound {
-        return this.createNbt()
     }
 
     fun setAuthor(entity: LivingEntity) {
@@ -83,6 +71,15 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
         const val AUTHOR_KEY: String = "author"
         fun createRandom(seed: Long): Random {
             return if (seed == 0L) Random.create(Util.getMeasuringTimeMs()) else Random.create(seed)
+        }
+
+        fun getInitialData(): StructureLoaderData {
+            return StructureLoaderData(
+                BlockPos.ORIGIN, // this should hopefully never be used
+                "",
+                shouldIncludeEntities = false,
+                direction = 0
+            )
         }
     }
 }

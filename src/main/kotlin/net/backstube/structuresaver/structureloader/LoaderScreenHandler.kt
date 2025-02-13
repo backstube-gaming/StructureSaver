@@ -2,65 +2,47 @@ package net.backstube.structuresaver.structureloader
 
 import net.backstube.structuresaver.StructureSaver
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
+import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
-import net.minecraft.screen.ArrayPropertyDelegate
-import net.minecraft.screen.PropertyDelegate
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 
 class LoaderScreenHandler(
     syncId: Int,
-    playerInventory: PlayerInventory?,
-    val blockPos: BlockPos,
     var blockEntity: StructureLoaderBlockEntity?,
-    val propertyDelegate: PropertyDelegate
+    var data: StructureLoaderData
 ) : ScreenHandler(EXTENDED_SCREEN_HANDLER, syncId) {
-
-    public var data: StructureLoaderData = StructureLoaderData(
-        BlockPos.ORIGIN, // this should hopefully never be used
-        "",
-        shouldIncludeEntities = false,
-        direction = 0
-    )
 
     companion object {
         fun register() {}
-        var EXTENDED_SCREEN_HANDLER: ExtendedScreenHandlerType<LoaderScreenHandler> = Registry.register(
+        var EXTENDED_SCREEN_HANDLER: ExtendedScreenHandlerType<LoaderScreenHandler, StructureLoaderData> = Registry.register(
             Registries.SCREEN_HANDLER, Identifier(StructureSaver.MODID, "loader_handler"),
-            ExtendedScreenHandlerType<LoaderScreenHandler>(::LoaderScreenHandler)
+            ExtendedScreenHandlerType<LoaderScreenHandler,StructureLoaderData>(::LoaderScreenHandler, StructureLoaderData.PACKET_CODEC)
         )
+
+        private fun getBlockEntity(world: World, pos: BlockPos): StructureLoaderBlockEntity? {
+            val blockEntity: BlockEntity? = world.getBlockEntity(pos)
+            return if (blockEntity is StructureLoaderBlockEntity)
+                blockEntity;
+            else
+                null;
+        }
     }
 
     //This constructor gets called on the client when the server wants it to open the screenHandler,
     //The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     //sync this empty inventory with the inventory on the server.
-    constructor(syncId: Int, inventory: PlayerInventory, buf: PacketByteBuf) : this(
+    constructor(syncId: Int, inventory: PlayerInventory, data: StructureLoaderData) : this(
         syncId,
-        inventory,
-        buf.readBlockPos(),
-        null,
-        ArrayPropertyDelegate(0)
+        getBlockEntity(inventory.player.world, data.pos),
+        data,
     ) {
-        val pos = this.blockPos; // already read from buffer
-        val genericEntity = inventory.player.world.getBlockEntity(pos)
-        if (genericEntity is StructureLoaderBlockEntity)
-            this.blockEntity = genericEntity
-        val name = buf.readString()
-        val shouldIncludeEntities = buf.readBoolean()
-        val direction = buf.readInt()
-
-        data = StructureLoaderData(
-            pos,
-            name,
-            shouldIncludeEntities,
-            direction
-        )
     }
 
     override fun quickMove(player: PlayerEntity?, slot: Int): ItemStack {

@@ -8,9 +8,9 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 
 object MessageSender {
-    fun openScreen(player: ServerPlayerEntity, stack: ItemStack?) {
+   /* fun openScreen(player: ServerPlayerEntity, stack: ItemStack?) {
         val passedData = PacketByteBuf(Unpooled.buffer())
         passedData.writeItemStack(stack)
         ServerPlayNetworking.send(player, Packets.S2C_OPEN_SCREEN, passedData)
-    }
+    }*/
 }

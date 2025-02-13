@@ -9,9 +9,8 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket
-import net.minecraft.screen.ArrayPropertyDelegate
+import net.minecraft.registry.RegistryWrapper
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -19,78 +18,63 @@ import net.minecraft.structure.StructureTemplate
 import net.minecraft.text.Text
 import net.minecraft.util.*
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import net.minecraft.util.math.random.Random
+import org.joml.Vector3f
 
 /**
  * Copy of Vanilla Structure Block with no range limitation and no corner mode
  */
 class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
-    BlockEntity(ExtendedStructureBlockEntityType, pos, state), ExtendedScreenHandlerFactory {
+    BlockEntity(ExtendedStructureBlockEntityType, pos, state), ExtendedScreenHandlerFactory<ExtendedStructureData> {
 
     private var author = ""
 
-    public val data = ExtendedStructureData(
-        pos,
-        "",
-        BlockPos(0, 1, 0),
-        Vec3i.ZERO,
-        shouldIncludeEntities = true,
-        shouldIgnoreAir = true,
-        shouldSaveOnServer = false,
-        showBoundingBox = true
-        )
+    public val data = getInitialData()
 
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
         // only the server has the property delegate at first
         // the client will start with an empty one and then sync
-        return ExtendedStructureBlockScreenHandler(syncId, PlayerInventory(player), this.pos, this, ArrayPropertyDelegate(0))
+        val data = getInitialData();
+        data.pos = this.pos;
+        return ExporterScreenHandler(syncId, PlayerInventory(player), data)
     }
 
     override fun getDisplayName(): Text {
         return Text.translatable("block.structuresaver.structure_export_block")
     }
 
-    override fun writeScreenOpeningData(player: ServerPlayerEntity?, buf: PacketByteBuf) {
-        buf.writeBlockPos(data.pos)
-        buf.writeString(data.name)
-        buf.writeBlockPos(data.offset)
-        val size = Vec3d(data.size.x.toDouble(), data.size.y.toDouble(), data.size.z.toDouble())
-        buf.writeVec3d(size)
-        buf.writeBoolean(data.shouldIncludeEntities)
-        buf.writeBoolean(data.shouldIgnoreAir)
-        buf.writeBoolean(data.shouldSaveOnServer)
-        buf.writeBoolean(data.showBoundingBox)
+    override fun getScreenOpeningData(player: ServerPlayerEntity?): ExtendedStructureData {
+        return data;
     }
 
-    override fun writeNbt(nbt: NbtCompound) {
-        super.writeNbt(nbt)
+    override fun writeNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
+        super.writeNbt(nbt, registryLookup)
         nbt.putString("author", this.author)
 
         nbt.putString("name", data.name)
         nbt.putInt("posX", data.offset.x)
         nbt.putInt("posY", data.offset.y)
         nbt.putInt("posZ", data.offset.z)
-        nbt.putInt("sizeX", data.size.x)
-        nbt.putInt("sizeY", data.size.y)
-        nbt.putInt("sizeZ", data.size.z)
+        nbt.putFloat("sizeX", data.size.x)
+        nbt.putFloat("sizeY", data.size.y)
+        nbt.putFloat("sizeZ", data.size.z)
         nbt.putBoolean("shouldIncludeEntities", data.shouldIncludeEntities)
         nbt.putBoolean("shouldIgnoreAir", data.shouldIgnoreAir)
         nbt.putBoolean("shouldSaveOnServer", data.shouldSaveOnServer)
         nbt.putBoolean("showBoundingBox", data.showBoundingBox)
     }
 
-    override fun readNbt(nbt: NbtCompound) {
-        super.readNbt(nbt)
+    override fun readNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
+        super.readNbt(nbt, registryLookup)
         this.author = nbt.getString("author")
         data.name =  nbt.getString("name")
         data.offset = BlockPos(nbt.getInt("posX"),
             nbt.getInt("posY"),
             nbt.getInt("posZ"))
-        data.size = Vec3i(nbt.getInt("sizeX"),
-            nbt.getInt("sizeY"),
-            nbt.getInt("sizeZ"))
+        data.size = Vector3f(nbt.getFloat("sizeX"),
+            nbt.getFloat("sizeY"),
+            nbt.getFloat("sizeZ"))
         data.shouldIncludeEntities =  nbt.getBoolean("shouldIncludeEntities")
         data.shouldIgnoreAir =  nbt.getBoolean("shouldIgnoreAir")
         data.shouldSaveOnServer =  nbt.getBoolean("shouldSaveOnServer")
@@ -99,10 +83,6 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun toUpdatePacket(): BlockEntityUpdateS2CPacket? {
         return BlockEntityUpdateS2CPacket.create(this)
-    }
-
-    override fun toInitialChunkDataNbt(): NbtCompound {
-        return this.createNbt()
     }
 
 //    fun openScreen(player: PlayerEntity): Boolean {
@@ -138,7 +118,7 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
             structureTemplate.saveFromWorld(
                 this.world,
                 blockPos,
-                data.size,
+                Vec3i(data.size.x.toInt(), data.size.y.toInt(), data.size.z.toInt()),
                 !data.shouldIncludeEntities,
                 Blocks.STRUCTURE_VOID
             )
@@ -161,6 +141,18 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
         const val AUTHOR_KEY: String = "author"
         fun createRandom(seed: Long): Random {
             return if (seed == 0L) Random.create(Util.getMeasuringTimeMs()) else Random.create(seed)
+        }
+        fun getInitialData(): ExtendedStructureData {
+           return ExtendedStructureData(
+                BlockPos.ORIGIN, // this should hopefully never be used
+                "",
+                BlockPos(0, 1, 0),
+                Vector3f(0f),
+                shouldIncludeEntities = false,
+                shouldIgnoreAir = true,
+                shouldSaveOnServer = false,
+                showBoundingBox = true
+            )
         }
     }
 }

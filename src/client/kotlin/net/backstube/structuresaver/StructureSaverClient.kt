@@ -4,7 +4,7 @@ import net.backstube.structuresaver.renderer.ExtendedStructureBlockEntityRendere
 import net.backstube.structuresaver.renderer.StructureLoaderBlockEntityRenderer
 import net.backstube.structuresaver.screens.ExtendedStructureBlockScreen
 import net.backstube.structuresaver.screens.StructureLoaderScreen
-import net.backstube.structuresaver.structureblock.ExtendedStructureBlockScreenHandler
+import net.backstube.structuresaver.structureblock.ExporterScreenHandler
 import net.backstube.structuresaver.structureloader.LoaderScreenHandler
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.gui.screen.ingame.HandledScreens
@@ -17,8 +17,8 @@ object StructureSaverClient : ClientModInitializer {
 
 		// the generics are required, because the inference does not work correctly!
 		@Suppress("RemoveExplicitTypeArguments")
-		HandledScreens.register<ExtendedStructureBlockScreenHandler, ExtendedStructureBlockScreen>(
-			ExtendedStructureBlockScreenHandler.EXTENDED_SCREEN_HANDLER
+		HandledScreens.register<ExporterScreenHandler, ExtendedStructureBlockScreen>(
+			ExporterScreenHandler.EXTENDED_SCREEN_HANDLER
 		) { handler, _, _ -> ExtendedStructureBlockScreen(handler) }
 		BlockEntityRendererFactories.register(StructureSaver.Entries.ExtendedStructureBlockEntityType, ::ExtendedStructureBlockEntityRenderer);
 

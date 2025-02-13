@@ -3,7 +3,7 @@ package net.backstube.structuresaver.screens
 import net.backstube.structuresaver.StructureSaver
 import net.backstube.structuresaver.Translations
 import net.backstube.structuresaver.clientnetworking.MessageSender
-import net.backstube.structuresaver.structureblock.ExtendedStructureBlockScreenHandler
+import net.backstube.structuresaver.structureblock.ExporterScreenHandler
 import net.minecraft.block.entity.StructureBlockBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -22,7 +22,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 
-class ExtendedStructureBlockScreen(private val handler: ExtendedStructureBlockScreenHandler) : ScreenHandlerProvider<ExtendedStructureBlockScreenHandler>,
+class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) : ScreenHandlerProvider<ExporterScreenHandler>,
     Screen(Text.translatable(StructureSaver.Entries.ExtendedStructureBlock.translationKey)) {
 
     companion object {
@@ -315,7 +315,7 @@ class ExtendedStructureBlockScreen(private val handler: ExtendedStructureBlockSc
         return false
     }
 
-    override fun getScreenHandler(): ExtendedStructureBlockScreenHandler {
+    override fun getScreenHandler(): ExporterScreenHandler {
         return handler
     }
 }
