@@ -16,6 +16,8 @@ classes/
 *.ipr
 *.iws
 
+.kotlin/
+
 # vscode
 
 .settings/

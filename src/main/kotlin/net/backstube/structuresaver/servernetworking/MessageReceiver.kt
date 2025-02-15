@@ -125,7 +125,7 @@ object MessageReceiver {
                 blockEntity.markDirty()
 
                 if (payload.actionName == StructureBlockBlockEntity.Action.LOAD_AREA.name) {
-
+                    context.player().sendMessage(Text.literal("Started loading structure ..."))
                     val rotation: BlockRotation
                     when (blockEntity.data.direction) {
                         0 -> { // east-south

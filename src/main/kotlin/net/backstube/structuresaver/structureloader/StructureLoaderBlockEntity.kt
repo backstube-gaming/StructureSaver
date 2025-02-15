@@ -1,5 +1,7 @@
 package net.backstube.structuresaver.structureloader
 
+import com.google.gson.Gson
+import net.backstube.structuresaver.StructureSaver
 import net.backstube.structuresaver.StructureSaver.Entries.StructureLoaderBlockEntityType
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
@@ -37,6 +39,10 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     }
 
     override fun getScreenOpeningData(player: ServerPlayerEntity?): StructureLoaderData {
+        if(data.name == "" || data.pos == BlockPos.ORIGIN){
+            val gson = Gson()
+            StructureSaver.logger.error("Broken structure_loader data at {}. The loader wont work properly. Data: {}", this.pos, gson.toJson(data))
+        }
         return data
     }
 
@@ -55,6 +61,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
         data.name = nbt.getString("name")
         data.shouldIncludeEntities = nbt.getBoolean("shouldIncludeEntities")
         data.direction = nbt.getInt("direction")
+        data.pos = this.pos
     }
 
     override fun toUpdatePacket(): BlockEntityUpdateS2CPacket? {
