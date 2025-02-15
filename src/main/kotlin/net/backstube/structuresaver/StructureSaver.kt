@@ -1,5 +1,6 @@
 package net.backstube.structuresaver
 
+import net.backstube.structuresaver.components.StructureSaverComponents
 import net.backstube.structuresaver.networking.Packets
 import net.backstube.structuresaver.servernetworking.MessageReceiver
 import net.backstube.structuresaver.structureblock.ExporterScreenHandler
@@ -26,33 +27,33 @@ import java.security.SecureRandom
 object StructureSaver : ModInitializer {
 
     const val MODID = "structuresaver"
-    public val logger = LoggerFactory.getLogger(MODID)
-    public val random = CheckedRandom(SecureRandom().nextLong())
+    val logger = LoggerFactory.getLogger(MODID)
+    val random = CheckedRandom(SecureRandom().nextLong())
     private var clientSideHooks: ClientSideHooks = ClientSideHooks()
 
 
-    public object Entries {
-        public val StructureSaverItem = StructureSaverItem(Item.Settings())
+    object Entries {
+        val StructureSaverItem = StructureSaverItem(Item.Settings())
 
-        public val ExtendedStructureBlock = ExtendedStructureBlock(
+        val ExtendedStructureBlock = ExtendedStructureBlock(
             FabricBlockSettings.create().pistonBehavior(
                 PistonBehavior.BLOCK
             )
         )
-        public val ExtendedStructureBlockItem = BlockItem(ExtendedStructureBlock, Item.Settings())
-        public val ExtendedStructureBlockEntityType: BlockEntityType<ExtendedStructureBlockEntity> = Registry.register(
+        val ExtendedStructureBlockItem = BlockItem(ExtendedStructureBlock, Item.Settings())
+        val ExtendedStructureBlockEntityType: BlockEntityType<ExtendedStructureBlockEntity> = Registry.register(
             Registries.BLOCK_ENTITY_TYPE,
             Identifier(MODID, "structure_export_blockentity"),
             FabricBlockEntityTypeBuilder.create(::ExtendedStructureBlockEntity, ExtendedStructureBlock).build()
         )
 
-        public val StructureLoaderBlock = StructureLoaderBlock(
+        val StructureLoaderBlock = StructureLoaderBlock(
             FabricBlockSettings.create().pistonBehavior(
                 PistonBehavior.BLOCK
             )
         )
-        public val StructureLoaderBlockItem = BlockItem(StructureLoaderBlock, Item.Settings())
-        public val StructureLoaderBlockEntityType: BlockEntityType<StructureLoaderBlockEntity> = Registry.register(
+        val StructureLoaderBlockItem = BlockItem(StructureLoaderBlock, Item.Settings())
+        val StructureLoaderBlockEntityType: BlockEntityType<StructureLoaderBlockEntity> = Registry.register(
             Registries.BLOCK_ENTITY_TYPE,
             Identifier(MODID, "structure_loader_blockentity"),
             FabricBlockEntityTypeBuilder.create(::StructureLoaderBlockEntity, StructureLoaderBlock).build()
@@ -60,6 +61,7 @@ object StructureSaver : ModInitializer {
     }
 
     override fun onInitialize() {
+        StructureSaverComponents.register()
         Packets.register()
         Registry.register(Registries.ITEM, Identifier(MODID, "structure_saver"), Entries.StructureSaverItem)
 
@@ -90,11 +92,11 @@ object StructureSaver : ModInitializer {
         MessageReceiver.setupReceivers()
     }
 
-    public fun registerClientHooks(clientSideHooks: ClientSideHooks) {
+    fun registerClientHooks(clientSideHooks: ClientSideHooks) {
         this.clientSideHooks = clientSideHooks
     }
 
-    public fun getClientHooks(): ClientSideHooks {
+    fun getClientHooks(): ClientSideHooks {
         return this.clientSideHooks
     }
 }

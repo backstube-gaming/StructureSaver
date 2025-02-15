@@ -1,12 +1,11 @@
 package net.backstube.structuresaver.structuresaveritem
 
-import com.google.common.collect.Sets
 import net.backstube.structuresaver.BoundingBox
 import net.backstube.structuresaver.Exporter
 import net.backstube.structuresaver.StructureSaver
-import net.minecraft.block.Block
-import net.minecraft.block.Blocks
-import net.minecraft.client.item.TooltipContext
+import net.backstube.structuresaver.components.SaverItemData
+import net.backstube.structuresaver.components.StructureSaverComponents
+import net.minecraft.client.item.TooltipType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
@@ -14,7 +13,6 @@ import net.minecraft.item.ItemUsageContext
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.nbt.NbtIo
-import net.minecraft.structure.StructureTemplate
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -32,6 +30,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 class StructureSaverItem(settings: Settings?) : Item(settings) {
+
+
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
         val pos = context!!.blockPos;
         val player: PlayerEntity? = context.player
@@ -39,17 +39,23 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         if (!context.world.isClient && player != null && player.isSneaking) {
             val stack: ItemStack = context.stack
 
-            val tag = stack.orCreateNbt
-            if (!tag.contains("Position1")) {
-                tag.put("Position1", NbtHelper.fromBlockPos(pos))
+            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
+            if (component?.position1 == null) {
+                stack.set(
+                    StructureSaverComponents.SAVER_ITEM_COMPONENT,
+                    SaverItemData(pos, component?.position2, component?.canSave ?: false)
+                )
                 player.sendMessage(
                     Text.translatable("structuresaver.structure_saver.pos", 1, pos.x, pos.y, pos.z),
                     false
                 )
                 return ActionResult.SUCCESS
             }
-            if (!tag.contains("Position2")) {
-                tag.put("Position2", NbtHelper.fromBlockPos(pos))
+            if (component.position2 == null) {
+                stack.set(
+                    StructureSaverComponents.SAVER_ITEM_COMPONENT,
+                    SaverItemData(component.position1, pos, component.canSave)
+                )
                 player.sendMessage(
                     Text.translatable("structuresaver.structure_saver.pos", 2, pos.x, pos.y, pos.z),
                     false
@@ -62,12 +68,15 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
 
     override fun use(world: World?, player: PlayerEntity?, hand: Hand?): TypedActionResult<ItemStack> {
         val stack: ItemStack = player!!.mainHandStack
-        val tag = stack.orCreateNbt
+        val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
 
-        if (tag.contains("Position1") && tag.contains("Position2")) {
+        if (component?.position1 != null && component.position2 != null) {
             // prevent instant save
-            if (!tag.contains("CanSave")) {
-                tag.putBoolean("CanSave", true)
+            if (!component.canSave) {
+                stack.set(
+                    StructureSaverComponents.SAVER_ITEM_COMPONENT,
+                    SaverItemData(component.position1, component.position2, true)
+                )
                 return TypedActionResult.pass(stack)
             }
             if (world!!.isClient) {
@@ -84,39 +93,40 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
 
     override fun appendTooltip(
         stack: ItemStack?,
-        world: World?,
+        context: TooltipContext?,
         tooltip: MutableList<Text>?,
-        context: TooltipContext?
+        type: TooltipType?
     ) {
-        super.appendTooltip(stack, world, tooltip, context)
+        super.appendTooltip(stack, context, tooltip, type)
         if (tooltip == null)
             return
-        val nbt = stack?.orCreateNbt
-        if (nbt != null && nbt.contains("Position1")) {
-            val pos = NbtHelper.toBlockPos(nbt.getCompound("Position1"))
+
+        val component = stack?.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
+        val pos1 = component?.position1;
+        if(pos1!= null){
             tooltip.add(
                 Text.translatable(
                     "structuresaver.item.structure_saver.position.tooltip",
                     1,
-                    pos.x,
-                    pos.y,
-                    pos.z
+                    pos1.x,
+                    pos1.y,
+                    pos1.z
                 )
             )
         }
-        if (nbt != null && nbt.contains("Position2")) {
-            val pos = NbtHelper.toBlockPos(nbt.getCompound("Position2"))
+        val pos2 = component?.position2;
+        if(pos2!= null){
             tooltip.add(
                 Text.translatable(
                     "structuresaver.item.structure_saver.position.tooltip",
                     2,
-                    pos.x,
-                    pos.y,
-                    pos.z
+                    pos2.x,
+                    pos2.y,
+                    pos2.z
                 )
             )
         }
-        if (nbt != null && nbt.contains("CanSave")) {
+        if (component?.canSave == true) {
             tooltip.add(TOOLTIP_SAVE)
         } else {
             tooltip.add(TOOLTIP_INFO)
@@ -128,12 +138,12 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         private val TOOLTIP_SAVE: Text = Text.translatable("structuresaver.item.structure_saver.save.tooltip")
 
         fun getArea(stack: ItemStack): BoundingBox? {
-            val nbt = stack.orCreateNbt
-            if (!nbt.contains("Position1") || !nbt.contains("Position2")) {
+            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
+            val pos1 = component?.position1
+            val pos2 = component?.position2
+            if (pos1 == null || pos2 == null) {
                 return null
             }
-            val pos1 = NbtHelper.toBlockPos(nbt.getCompound("Position1"))
-            val pos2 = NbtHelper.toBlockPos(nbt.getCompound("Position2"))
             val minX = min(pos1.x, pos2.x)
             val minY = min(pos1.y, pos2.y)
             val minZ = min(pos1.z, pos2.z)
@@ -187,7 +197,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
             return path;
         }
 
-        public fun saveSchematic(
+        fun saveSchematic(
             world: World,
             stack: ItemStack,
             includeEntities: Boolean,
@@ -206,12 +216,8 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
             return exportPath?.fileName.toString()
         }
 
-        public fun removeTags(stack: ItemStack): ItemStack {
-            val tag = stack.orCreateNbt
-            tag.remove("Position1")
-            tag.remove("Position2")
-            tag.remove("CanSave")
-            stack.nbt = tag
+        fun removeTags(stack: ItemStack): ItemStack {
+            stack.remove(StructureSaverComponents.SAVER_ITEM_COMPONENT)
             return stack
         }
     }

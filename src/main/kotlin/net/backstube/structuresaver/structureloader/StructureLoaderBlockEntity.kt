@@ -24,7 +24,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     BlockEntity(StructureLoaderBlockEntityType, pos, state), ExtendedScreenHandlerFactory<StructureLoaderData> {
 
     private var author = ""
-    public val data = getInitialData()
+    public var data = getInitialData()
 
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
         // only the server has the property delegate at first

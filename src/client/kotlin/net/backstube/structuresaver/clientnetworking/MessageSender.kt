@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import org.joml.Vector3f
 
 object MessageSender {
     fun deleteTags(stack: ItemStack?) {
@@ -30,7 +31,7 @@ object MessageSender {
         pos: BlockPos?,
         text: String,
         offset: BlockPos,
-        size: Vec3d,
+        size: Vector3f,
         shouldIncludeEntities: Boolean,
         shouldIgnoreAir: Boolean,
         shouldSaveOnServer: Boolean
@@ -41,7 +42,7 @@ object MessageSender {
                 pos,
                 text,
                 offset,
-                size.toVector3f(),
+                size,
                 shouldIncludeEntities,
                 shouldIgnoreAir,
                 shouldSaveOnServer

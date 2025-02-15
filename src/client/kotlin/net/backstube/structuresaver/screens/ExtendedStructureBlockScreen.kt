@@ -18,6 +18,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
+import org.joml.Vector3f
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
@@ -222,14 +223,14 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
             this.parseInt(inputPosY!!.text),
             this.parseInt(inputPosZ!!.text)
         )
-        val sizeAsDouble = Vec3d(
-            this.parseDouble(inputSizeX!!.text),
-            this.parseDouble(inputSizeY!!.text),
-            this.parseDouble(inputSizeZ!!.text)
+        val sizeAsFloat = Vector3f(
+            this.parseFloat(inputSizeX!!.text),
+            this.parseFloat(inputSizeY!!.text),
+            this.parseFloat(inputSizeZ!!.text)
         )
         handler.data.name = inputName!!.text
         handler.data.offset = offset
-        handler.data.size = Vec3i(sizeAsDouble.x.toInt(), sizeAsDouble.y.toInt(), sizeAsDouble.z.toInt())
+        handler.data.size = sizeAsFloat
         handler.data.shouldIncludeEntities = checkboxIncludeEntities?.isChecked ?: handler.data.shouldIncludeEntities
         handler.data.shouldIgnoreAir = checkboxIgnoreAir?.isChecked ?: handler.data.shouldIgnoreAir
         handler.data.shouldSaveOnServer = checkBoxSaveOnServer?.isChecked ?: handler.data.shouldSaveOnServer
@@ -239,7 +240,7 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
             handler.data.pos,
             handler.data.name,
             handler.data.offset,
-            sizeAsDouble,
+            sizeAsFloat,
             handler.data.shouldIncludeEntities,
             handler.data.shouldIgnoreAir,
             handler.data.shouldSaveOnServer
@@ -255,11 +256,11 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
         }
     }
 
-    private fun parseDouble(string: String): Double {
+    private fun parseFloat(string: String): Float {
         return try {
-            string.toDouble()
+            string.toFloat()
         } catch (var3: NumberFormatException) {
-            0.0
+            0.0f
         }
     }
 

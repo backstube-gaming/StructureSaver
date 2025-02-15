@@ -31,10 +31,7 @@ class ExporterScreenHandler(
 
         private fun getBlockEntity(world: World, pos: BlockPos): ExtendedStructureBlockEntity? {
             val blockEntity: BlockEntity? = world.getBlockEntity(pos)
-            return if (blockEntity is ExtendedStructureBlockEntity)
-                blockEntity;
-            else
-                null;
+            return blockEntity as? ExtendedStructureBlockEntity;
         }
     }
 
