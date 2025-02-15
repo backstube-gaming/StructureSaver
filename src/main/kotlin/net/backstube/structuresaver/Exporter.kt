@@ -2,7 +2,6 @@ package net.backstube.structuresaver
 
 import net.backstube.structuresaver.structuresaveritem.StructureSaverItem.Companion.writeTemplate
 import net.minecraft.block.Blocks
-import net.minecraft.block.StructureBlock
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.util.math.BlockPos
@@ -14,7 +13,7 @@ import kotlin.io.path.notExists
 
 class Exporter {
     companion object {
-        public val EXPORT_PATH: Path = Path.of(StructureSaver.MODID + "_exports")
+        val EXPORT_PATH: Path = Path.of(StructureSaver.MODID + "_exports")
 
         fun export(
             world: World,
@@ -33,7 +32,7 @@ class Exporter {
             template.saveFromWorld(world, origin, dimensions, shouldIncludeEntities,
                 if(shouldIngoreAir) Blocks.AIR else null)
             val tag = template.writeNbt(NbtCompound())
-            val exportPath: Path;
+            val exportPath: Path
             try {
                 exportPath = writeTemplate(EXPORT_PATH, name, tag, asSnbt)
                 return exportPath

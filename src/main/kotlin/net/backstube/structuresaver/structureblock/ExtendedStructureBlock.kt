@@ -12,7 +12,6 @@ import net.minecraft.state.property.EnumProperty
 import net.minecraft.state.property.Properties.STRUCTURE_BLOCK_MODE
 import net.minecraft.state.property.Property
 import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
@@ -51,7 +50,7 @@ class ExtendedStructureBlock(settings: Settings?) : BlockWithEntity(settings), O
         val blockEntity = world.getBlockEntity(pos)
         if (blockEntity is ExtendedStructureBlockEntity && state != null) {
             if (!world.isClient) {
-                player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+                player.openHandledScreen(state.createScreenHandlerFactory(world, pos))
             }
             return ActionResult.SUCCESS
 

@@ -29,9 +29,9 @@ class LoaderScreenHandler(
         private fun getBlockEntity(world: World, pos: BlockPos): StructureLoaderBlockEntity? {
             val blockEntity: BlockEntity? = world.getBlockEntity(pos)
             return if (blockEntity is StructureLoaderBlockEntity)
-                blockEntity;
+                blockEntity
             else
-                null;
+                null
         }
     }
 
@@ -42,8 +42,7 @@ class LoaderScreenHandler(
         syncId,
         getBlockEntity(inventory.player.world, data.pos),
         data,
-    ) {
-    }
+    )
 
     override fun quickMove(player: PlayerEntity?, slot: Int): ItemStack {
         return ItemStack.EMPTY
@@ -53,7 +52,7 @@ class LoaderScreenHandler(
         return true
     }
 
-    public fun saveToBlockEntity() {
+    fun saveToBlockEntity() {
         blockEntity?.data?.name = this.data.name
         blockEntity?.data?.shouldIncludeEntities = this.data.shouldIncludeEntities
         blockEntity?.data?.pos = this.data.pos

@@ -12,7 +12,6 @@ import net.minecraft.screen.ScreenHandler
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
-import org.joml.Vector3f
 
 class ExporterScreenHandler(
     syncId: Int,
@@ -31,7 +30,7 @@ class ExporterScreenHandler(
 
         private fun getBlockEntity(world: World, pos: BlockPos): ExtendedStructureBlockEntity? {
             val blockEntity: BlockEntity? = world.getBlockEntity(pos)
-            return blockEntity as? ExtendedStructureBlockEntity;
+            return blockEntity as? ExtendedStructureBlockEntity
         }
     }
 
@@ -42,8 +41,7 @@ class ExporterScreenHandler(
         syncId,
         getBlockEntity(inventory.player.world, data.pos),
         data,
-    ) {
-    }
+    )
 
     override fun quickMove(player: PlayerEntity?, slot: Int): ItemStack {
         return ItemStack.EMPTY
@@ -53,7 +51,7 @@ class ExporterScreenHandler(
         return true
     }
 
-    public fun saveToBlockEntity() {
+    fun saveToBlockEntity() {
         blockEntity?.data?.name = this.data.name
         blockEntity?.data?.offset = this.data.offset
         blockEntity?.data?.size = this.data.size

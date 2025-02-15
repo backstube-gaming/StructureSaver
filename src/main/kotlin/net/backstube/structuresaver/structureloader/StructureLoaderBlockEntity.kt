@@ -13,9 +13,7 @@ import net.minecraft.registry.RegistryWrapper
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import net.minecraft.util.*
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.random.Random
 
 /**
  * Copy of Vanilla Structure Block with no range limitation and no corner mode
@@ -24,13 +22,13 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     BlockEntity(StructureLoaderBlockEntityType, pos, state), ExtendedScreenHandlerFactory<StructureLoaderData> {
 
     private var author = ""
-    public var data = getInitialData()
+    var data = getInitialData()
 
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
         // only the server has the property delegate at first
         // the client will start with an empty one and then sync
-        val data = getInitialData();
-        data.pos = this.pos;
+        val data = getInitialData()
+        data.pos = this.pos
         return LoaderScreenHandler(syncId, PlayerInventory(player), data)
     }
 
@@ -39,12 +37,12 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     }
 
     override fun getScreenOpeningData(player: ServerPlayerEntity?): StructureLoaderData {
-        return data;
+        return data
     }
 
     override fun writeNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
         super.writeNbt(nbt, registryLookup)
-        nbt.putString("author", this.author)
+        nbt.putString(AUTHOR_KEY, this.author)
 
         nbt.putString("name", data.name)
         nbt.putBoolean("shouldIncludeEntities", data.shouldIncludeEntities)
@@ -53,7 +51,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun readNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
         super.readNbt(nbt, registryLookup)
-        this.author = nbt.getString("author")
+        this.author = nbt.getString(AUTHOR_KEY)
         data.name = nbt.getString("name")
         data.shouldIncludeEntities = nbt.getBoolean("shouldIncludeEntities")
         data.direction = nbt.getInt("direction")
@@ -69,9 +67,6 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
 
     companion object {
         const val AUTHOR_KEY: String = "author"
-        fun createRandom(seed: Long): Random {
-            return if (seed == 0L) Random.create(Util.getMeasuringTimeMs()) else Random.create(seed)
-        }
 
         fun getInitialData(): StructureLoaderData {
             return StructureLoaderData(

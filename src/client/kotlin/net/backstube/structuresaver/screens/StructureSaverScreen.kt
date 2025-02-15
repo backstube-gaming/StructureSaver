@@ -1,7 +1,6 @@
 package net.backstube.structuresaver.screens
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.brigadier.Message
 import net.backstube.structuresaver.ClientUtility
 import net.backstube.structuresaver.Exporter
 import net.backstube.structuresaver.StructureSaver
@@ -60,7 +59,7 @@ class StructureSaverScreen(private val stack: ItemStack, title: Text?) : Screen(
                 ignoreAir?.isChecked ?: true,
                 saveOnServer?.isChecked ?: false
             )
-            this.clearItem(stack);
+            this.clearItem(stack)
             this.close()
         }.position(relX + 10, relY + 55)
             .size(60, 20)
@@ -89,11 +88,11 @@ class StructureSaverScreen(private val stack: ItemStack, title: Text?) : Screen(
             .build()
         this.ignoreAir = this.addDrawableChild(ignoreAir)
 
-        val saveOnServer = CheckboxWidget.builder(Translations.SAVE_ON_SERVER_TEXT, this.textRenderer)
+        /*val saveOnServer = CheckboxWidget.builder(Translations.SAVE_ON_SERVER_TEXT, this.textRenderer)
             .pos(relX + 10, relY + 140)
             .tooltip(Tooltip.of(Translations.SAVE_ON_SERVER_TOOLTIP))
             .checked(true)
-            .build()
+            .build()*/
         // this.saveOnServer = this.addDrawableChild(saveOnServer) -> not implemented yet
 
         this.addDrawableChild(TextWidget(relX, relY + 8, 100, 15, this.title, textRenderer))
@@ -115,9 +114,6 @@ class StructureSaverScreen(private val stack: ItemStack, title: Text?) : Screen(
         StructureSaverItem.removeTags(stack)
         MessageSender.deleteTags(stack)
     }
-
-    val isPauseScreen: Boolean
-        get() = false
 
     companion object {
         private val SCREEN_TEXTURE = Identifier(StructureSaver.MODID, "textures/gui/structure_saver.png")

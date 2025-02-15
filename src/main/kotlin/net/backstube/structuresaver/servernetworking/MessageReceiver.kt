@@ -25,8 +25,7 @@ object MessageReceiver {
                 return@registerGlobalReceiver
             context.server().execute {
                 val stackWithoutTags = StructureSaverItem.removeTags(payload.itemStack)
-                //TODO: check
-                context.player().inventory.setStack(context.player().inventory.selectedSlot, stackWithoutTags);
+                context.player().inventory.setStack(context.player().inventory.selectedSlot, stackWithoutTags)
             }
         }
 
@@ -60,7 +59,7 @@ object MessageReceiver {
                     return@execute
                 }
                 val stackWithoutTags = StructureSaverItem.removeTags(payload.itemStack)
-                context.player().inventory.setStack(context.player().inventory.selectedSlot, stackWithoutTags);
+                context.player().inventory.setStack(context.player().inventory.selectedSlot, stackWithoutTags)
                 context.player().sendMessage(Text.translatable("structuresaver.schematic.saved", payload.name), true)
             }
         }
@@ -73,11 +72,11 @@ object MessageReceiver {
 
             if (!context.player().isCreativeLevelTwoOp) {
                 context.player().sendMessage(Text.literal("Error: You need permission level 2"))
-                return@registerGlobalReceiver;
+                return@registerGlobalReceiver
             }
             if (payload.saveOnServer && !context.player().hasPermissionLevel(4)) {
                 context.player().sendMessage(Text.literal("Error: You need permission level 4 to save on the server"))
-                return@registerGlobalReceiver;
+                return@registerGlobalReceiver
             }
 
             context.server().execute {
@@ -114,7 +113,7 @@ object MessageReceiver {
             val blockPos = payload.data.pos
             if (!context.player().isCreativeLevelTwoOp) {
                 context.player().sendMessage(Text.literal("Error: You need permission level 2"))
-                return@registerGlobalReceiver;
+                return@registerGlobalReceiver
             }
 
             context.server().execute {
@@ -162,7 +161,7 @@ object MessageReceiver {
                     if (structure.isEmpty) {
                         context.player().sendMessage(Text.literal("Structure $structureId not found or empty"))
                         StructureSaver.logger.error("Structure '{}' not found or empty", structureId)
-                        return@execute;
+                        return@execute
                     } else {
                         StructureSaver.logger.info("Structure '{}' template read successfully", structureId)
                     }

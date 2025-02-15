@@ -69,7 +69,7 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
             ButtonWidget.builder(
                 Text.translatable("structuresaver.structure_loader_block.turn")
             ) { _: ButtonWidget? ->
-                handler.data.direction += 1;
+                handler.data.direction += 1
                 if(handler.data.direction > 3)
                     handler.data.direction = 0
                 this.updateStructureBlock(StructureBlockBlockEntity.Action.UPDATE_DATA)
@@ -127,7 +127,7 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
         MessageSender.updateStructureLoaderBlock(
             action,
             handler.data
-        );
+        )
         return true
     }
 
@@ -155,7 +155,7 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
         )
         inputName!!.render(context, mouseX, mouseY, delta)
 
-        val explanationLines = Text.translatable("structuresaver.structure_loader_block.explanation").string.split("\n");
+        val explanationLines = Text.translatable("structuresaver.structure_loader_block.explanation").string.split("\n")
         for((index, line) in explanationLines.withIndex()){
             context.drawTextWithShadow(
                 this.textRenderer, Text.literal(line),

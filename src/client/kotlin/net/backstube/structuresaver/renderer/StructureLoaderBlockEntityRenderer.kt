@@ -1,25 +1,19 @@
-package net.backstube.structuresaver.renderer;
+package net.backstube.structuresaver.renderer
 
-import net.backstube.structuresaver.structureblock.ExtendedStructureBlockEntity
 import net.backstube.structuresaver.structureloader.StructureLoaderBlockEntity
-import net.minecraft.block.entity.StructureBlockBlockEntity
-import net.minecraft.block.enums.StructureBlockMode
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.WorldRenderer
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory
-import net.minecraft.client.render.block.entity.StructureBlockBlockEntityRenderer
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.util.BlockMirror
-import net.minecraft.util.BlockRotation
 import net.minecraft.util.math.BlockPos
 
 /*
 * Copy of Vanilla class to show bounding box
 */
-public class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
+class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     BlockEntityRenderer<StructureLoaderBlockEntity> {
 
 

@@ -20,13 +20,13 @@ object StructureSaverClient : ClientModInitializer {
 		HandledScreens.register<ExporterScreenHandler, ExtendedStructureBlockScreen>(
 			ExporterScreenHandler.EXTENDED_SCREEN_HANDLER
 		) { handler, _, _ -> ExtendedStructureBlockScreen(handler) }
-		BlockEntityRendererFactories.register(StructureSaver.Entries.ExtendedStructureBlockEntityType, ::ExtendedStructureBlockEntityRenderer);
+		BlockEntityRendererFactories.register(StructureSaver.Entries.ExtendedStructureBlockEntityType, ::ExtendedStructureBlockEntityRenderer)
 
-		// the generics are required, because the inference does not work correctly!
+        // the generics are required, because the inference does not work correctly!
 		@Suppress("RemoveExplicitTypeArguments")
 		HandledScreens.register<LoaderScreenHandler, StructureLoaderScreen>(
 			LoaderScreenHandler.EXTENDED_SCREEN_HANDLER
 		) { handler, _, _ -> StructureLoaderScreen(handler) }
-		BlockEntityRendererFactories.register(StructureSaver.Entries.StructureLoaderBlockEntityType, ::StructureLoaderBlockEntityRenderer);
-	}
+		BlockEntityRendererFactories.register(StructureSaver.Entries.StructureLoaderBlockEntityType, ::StructureLoaderBlockEntityRenderer)
+    }
 }

@@ -33,13 +33,13 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
 
 
     override fun useOnBlock(context: ItemUsageContext?): ActionResult {
-        val pos = context!!.blockPos;
+        val pos = context!!.blockPos
         val player: PlayerEntity? = context.player
 
         if (!context.world.isClient && player != null && player.isSneaking) {
             val stack: ItemStack = context.stack
 
-            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
+            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
             if (component?.position1 == null) {
                 stack.set(
                     StructureSaverComponents.SAVER_ITEM_COMPONENT,
@@ -68,7 +68,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
 
     override fun use(world: World?, player: PlayerEntity?, hand: Hand?): TypedActionResult<ItemStack> {
         val stack: ItemStack = player!!.mainHandStack
-        val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
+        val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
 
         if (component?.position1 != null && component.position2 != null) {
             // prevent instant save
@@ -101,8 +101,8 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         if (tooltip == null)
             return
 
-        val component = stack?.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
-        val pos1 = component?.position1;
+        val component = stack?.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
+        val pos1 = component?.position1
         if(pos1!= null){
             tooltip.add(
                 Text.translatable(
@@ -114,7 +114,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
                 )
             )
         }
-        val pos2 = component?.position2;
+        val pos2 = component?.position2
         if(pos2!= null){
             tooltip.add(
                 Text.translatable(
@@ -138,7 +138,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         private val TOOLTIP_SAVE: Text = Text.translatable("structuresaver.item.structure_saver.save.tooltip")
 
         fun getArea(stack: ItemStack): BoundingBox? {
-            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT);
+            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
             val pos1 = component?.position1
             val pos2 = component?.position2
             if (pos1 == null || pos2 == null) {
@@ -153,22 +153,22 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
             return BoundingBox(BlockPos(minX, minY, minZ), BlockPos(maxX, maxY, maxZ))
         }
 
-        private val fileDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        private val fileDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
         private fun makeSpaceForFileAndGetPath(parentFolder: Path, name: String?, asSnbt: Boolean): Path {
-            var extension = if (asSnbt) ".snbt" else ".nbt";
+            var extension = if (asSnbt) ".snbt" else ".nbt"
             if (name != null && (name.endsWith(".nbt") || name.endsWith(".snbt")))
-                extension = "";
+                extension = ""
 
-            val filename = (if (name == null) "template" else normalize(name));
+            val filename = (if (name == null) "template" else normalize(name))
             val filepath = parentFolder.resolve(filename + extension)
 
             try {
                 if (Files.exists(filepath)) {
                     val attrs = Files.readAttributes(filepath, BasicFileAttributes::class.java)
-                    val timestamp = attrs.creationTime();
-                    val date = Date(timestamp.toMillis());
+                    val timestamp = attrs.creationTime()
+                    val date = Date(timestamp.toMillis())
                     val newPath = parentFolder.resolve(filename + "_backup_" + fileDateFormat.format(date) + extension)
-                    Files.move(filepath, newPath);
+                    Files.move(filepath, newPath)
                 }
             } catch (e: IOException) {
                 throw java.lang.IllegalStateException("Failed to rename old file. Reason: " + e.message, e)
@@ -194,7 +194,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
             } catch (e: IOException) {
                 throw java.lang.IllegalStateException("Failed to create template file. Reason: " + e.message, e)
             }
-            return path;
+            return path
         }
 
         fun saveSchematic(

@@ -3,7 +3,6 @@ package net.backstube.structuresaver.structureblock
 import net.backstube.structuresaver.StructureSaver.Entries.ExtendedStructureBlockEntityType
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
-import net.minecraft.block.Blocks
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -13,13 +12,8 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket
 import net.minecraft.registry.RegistryWrapper
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.server.world.ServerWorld
-import net.minecraft.structure.StructureTemplate
 import net.minecraft.text.Text
-import net.minecraft.util.*
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3i
-import net.minecraft.util.math.random.Random
 import org.joml.Vector3f
 
 /**
@@ -30,13 +24,13 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
 
     private var author = ""
 
-    public val data = getInitialData()
+    val data = getInitialData()
 
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
         // only the server has the property delegate at first
         // the client will start with an empty one and then sync
-        val data = getInitialData();
-        data.pos = this.pos;
+        val data = getInitialData()
+        data.pos = this.pos
         return ExporterScreenHandler(syncId, PlayerInventory(player), data)
     }
 
@@ -45,12 +39,12 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
     }
 
     override fun getScreenOpeningData(player: ServerPlayerEntity?): ExtendedStructureData {
-        return data;
+        return data
     }
 
     override fun writeNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
         super.writeNbt(nbt, registryLookup)
-        nbt.putString("author", this.author)
+        nbt.putString(AUTHOR_KEY, this.author)
 
         nbt.putString("name", data.name)
         nbt.putInt("posX", data.offset.x)
@@ -67,7 +61,7 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun readNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
         super.readNbt(nbt, registryLookup)
-        this.author = nbt.getString("author")
+        this.author = nbt.getString(AUTHOR_KEY)
         data.name =  nbt.getString("name")
         data.offset = BlockPos(nbt.getInt("posX"),
             nbt.getInt("posY"),
@@ -101,47 +95,8 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
         this.author = entity.name.string
     }
 
-    fun saveStructure(interactive: Boolean = true): Boolean {
-        if (!world!!.isClient && data.name.isNotBlank()) {
-            val blockPos = getPos().add(data.offset)
-            val serverWorld = world as ServerWorld?
-            val structureTemplateManager = serverWorld!!.structureTemplateManager
-
-            val templateName = Identifier.tryParse(data.name)
-            val structureTemplate: StructureTemplate
-            try {
-                structureTemplate = structureTemplateManager.getTemplateOrBlank(templateName)
-            } catch (var8: InvalidIdentifierException) {
-                return false
-            }
-
-            structureTemplate.saveFromWorld(
-                this.world,
-                blockPos,
-                Vec3i(data.size.x.toInt(), data.size.y.toInt(), data.size.z.toInt()),
-                !data.shouldIncludeEntities,
-                Blocks.STRUCTURE_VOID
-            )
-            structureTemplate.author = author
-            return if (interactive) {
-                try {
-                    structureTemplateManager.saveTemplate(templateName)
-                } catch (var7: InvalidIdentifierException) {
-                    false
-                }
-            } else {
-                true
-            }
-        } else {
-            return false
-        }
-    }
-
     companion object {
         const val AUTHOR_KEY: String = "author"
-        fun createRandom(seed: Long): Random {
-            return if (seed == 0L) Random.create(Util.getMeasuringTimeMs()) else Random.create(seed)
-        }
         fun getInitialData(): ExtendedStructureData {
            return ExtendedStructureData(
                 BlockPos.ORIGIN, // this should hopefully never be used

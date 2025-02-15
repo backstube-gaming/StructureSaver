@@ -16,8 +16,6 @@ import net.minecraft.client.gui.widget.TextFieldWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
-import net.minecraft.util.math.Vec3i
 import org.joml.Vector3f
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -76,11 +74,11 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
             .build()
         this.checkboxIgnoreAir = this.addDrawableChild(ignoreAir)
 
-        val saveOnServer = CheckboxWidget.builder(Translations.SAVE_ON_SERVER_TEXT, this.textRenderer)
+        /*val saveOnServer = CheckboxWidget.builder(Translations.SAVE_ON_SERVER_TEXT, this.textRenderer)
             .pos(width / 2 + 100, 150)
             .tooltip(Tooltip.of(Translations.SAVE_ON_SERVER_TOOLTIP))
             .checked(handler.data.shouldSaveOnServer)
-            .build()
+            .build()*/
         // this.checkBoxSaveOnServer = this.addDrawableChild(saveOnServer) -> not implemented yet
 
         this.buttonExport = addDrawableChild(
@@ -244,7 +242,7 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
             handler.data.shouldIncludeEntities,
             handler.data.shouldIgnoreAir,
             handler.data.shouldSaveOnServer
-        );
+        )
         return true
     }
 
@@ -303,7 +301,7 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
         inputSizeY!!.render(context, mouseX, mouseY, delta)
         inputSizeZ!!.render(context, mouseX, mouseY, delta)
 
-        val explanationLines = Text.translatable("structuresaver.structure_export_block.explanation").string.split("\n");
+        val explanationLines = Text.translatable("structuresaver.structure_export_block.explanation").string.split("\n")
         for((index, line) in explanationLines.withIndex()){
             context.drawTextWithShadow(
                 this.textRenderer, Text.literal(line),
