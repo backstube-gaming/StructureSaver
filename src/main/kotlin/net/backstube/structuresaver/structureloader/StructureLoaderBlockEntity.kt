@@ -27,10 +27,12 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     BlockEntity(StructureLoaderBlockEntityType, pos, state), ExtendedScreenHandlerFactory<StructureLoaderData> {
 
     private var author = ""
-    var data: StructureLoaderData? = null
+    var data = getInitialData()
 
-    private fun getScreenData(): StructureLoaderData{
-        val component = data ?: getInitialData()
+    override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
+        // only the server has the property delegate at first
+        // the client will start with an empty one and then sync
+        val component = data
         if (component.name == "" || component.pos == BlockPos.ORIGIN) {
             val gson = Gson()
             StructureSaver.logger.error(
@@ -40,13 +42,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
             )
         }
         component.pos = this.pos
-        return component
-    }
-
-    override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
-        // only the server has the property delegate at first
-        // the client will start with an empty one and then sync
-        return LoaderScreenHandler(syncId, PlayerInventory(player), getScreenData())
+        return LoaderScreenHandler(syncId, PlayerInventory(player), component)
     }
 
     override fun getDisplayName(): Text {
@@ -54,7 +50,7 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
     }
 
     override fun getScreenOpeningData(player: ServerPlayerEntity?): StructureLoaderData {
-        return getScreenData()
+        return data
     }
 
     override fun addComponents(componentMapBuilder: ComponentMap.Builder) {
@@ -64,22 +60,18 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun readComponents(components: ComponentsAccess) {
         super.readComponents(components)
-        if (data == null) {
-            val initial = getInitialData()
             data = components.getOrDefault(
                 SSComponents.LOADER_COMPONENT,
-                StructureLoaderData(this.pos, initial.name, initial.shouldIncludeEntities, initial.direction)
+                getInitialData()
             )
-        }
     }
 
     override fun writeNbt(nbt: NbtCompound, registryLookup: RegistryWrapper.WrapperLookup) {
         super.writeNbt(nbt, registryLookup)
         nbt.putString(AUTHOR_KEY, this.author)
 
-        data = data ?: getInitialData()
         val encoded = CodecHelper.encodeNbt(
-            StructureLoaderData.CODEC, data!!, "StructureLoaderBlockEntity",
+            StructureLoaderData.CODEC, data, "StructureLoaderBlockEntity",
             pos.toString(), StructureSaver.logger
         )
         if (encoded != null) {
@@ -103,9 +95,6 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
                 StructureSaver.logger
             )
         }!!
-        // in case something wrote the initial data
-        if (decoded.pos == BlockPos.ORIGIN)
-            decoded.pos = this.pos
         data = decoded
     }
 
@@ -125,17 +114,17 @@ class StructureLoaderBlockEntity(pos: BlockPos, state: BlockState) :
         this.author = entity.name.string
     }
 
+    fun getInitialData(): StructureLoaderData {
+        return StructureLoaderData(
+            this.pos,
+            "",
+            shouldIncludeEntities = false,
+            direction = 0
+        )
+    }
+
     companion object {
         const val AUTHOR_KEY: String = "author"
         const val DATA_KEY = "structureloader"
-
-        fun getInitialData(): StructureLoaderData {
-            return StructureLoaderData(
-                BlockPos.ORIGIN, // this should hopefully never be used
-                "",
-                shouldIncludeEntities = false,
-                direction = 0
-            )
-        }
     }
 }

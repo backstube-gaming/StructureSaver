@@ -72,7 +72,7 @@ class ExtendedStructureBlockEntityRenderer(ctx: BlockEntityRendererFactory.Conte
     }
 
     override fun getRenderDistance(): Int {
-        return 2048
+        return 10000
     }
 }
 

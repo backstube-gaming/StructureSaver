@@ -10,7 +10,7 @@
   "screen.structuresaver.select_template": "Please select a template",
 
   "generator.structuresaver.skyblock": "Skyblock",
-  "structuresaver.structure_export_block.explanation": "Click 'Export' to save the structure\nfile to '/structuresaver_exports'",
+  "structuresaver.structure_export_block.explanation": "Click 'Export' to save the structure\nfile to '/structure_exports'",
   "structuresaver.structure_loader_block.explanation": "Click 'Place' to load the structure\ninto your world. The entire structure will be placed,\nnot just the highlighted chunk.",
   "structuresaver.structure_export_block.export": "EXPORT",
 
@@ -152,7 +152,7 @@
   "structuresaver.screen.button.open_folder.tooltip": "Open Folder",
   "structuresaver.screen.widget.structure_name": "Structure Name",
   "structuresaver.screen.open_folder.error": "Could not open folder: %s",
-  "structuresaver.schematic.saved": "Schematic saved in structuresaver_exports/%s",
+  "structuresaver.schematic.saved": "Schematic saved in structure_exports/%s",
   "structuresaver.structure_saver.pos": "Position %s set at x %s, y %s, z %s",
 
   "structuresaver.compat.disabled_management": "This and all other team management is disabled by %s.",

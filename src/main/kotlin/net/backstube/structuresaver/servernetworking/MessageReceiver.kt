@@ -79,6 +79,8 @@ object MessageReceiver {
                 return@registerGlobalReceiver
             }
 
+            context.player().sendMessage(Text.literal("Starting export ..."))
+
             context.server().execute {
                 val blockEntity = context.player().serverWorld.getBlockEntity(payload.pos)
                 if (blockEntity !is ExtendedStructureBlockEntity)
@@ -169,7 +171,7 @@ object MessageReceiver {
                     val structureResult = structure.get()
                     val wasPlaced = structureResult.place(
                         context.player().serverWorld,
-                        BlockPos(blockEntity.pos.x, blockEntity.pos.y, blockEntity.pos.z),
+                        BlockPos(blockEntity.pos.x, blockEntity.pos.y + 1, blockEntity.pos.z),
                         BlockPos(0, 0, 0),
                         placementData,
                         StructureSaver.random,

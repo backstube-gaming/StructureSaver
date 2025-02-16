@@ -13,7 +13,7 @@ import kotlin.io.path.notExists
 
 class Exporter {
     companion object {
-        val EXPORT_PATH: Path = Path.of(StructureSaver.MODID + "_exports")
+        val EXPORT_PATH: Path = Path.of("structure_exports")
 
         fun export(
             world: World,
