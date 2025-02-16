@@ -29,7 +29,6 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
     override fun createMenu(syncId: Int, playerInventory: PlayerInventory?, player: PlayerEntity?): ScreenHandler {
         // only the server has the property delegate at first
         // the client will start with an empty one and then sync
-        val data = getInitialData()
         data.pos = this.pos
         return ExporterScreenHandler(syncId, PlayerInventory(player), data)
     }
@@ -77,6 +76,10 @@ class ExtendedStructureBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun toUpdatePacket(): BlockEntityUpdateS2CPacket? {
         return BlockEntityUpdateS2CPacket.create(this)
+    }
+
+    override fun toInitialChunkDataNbt(registryLookup: RegistryWrapper.WrapperLookup?): NbtCompound {
+        return createNbt(registryLookup)
     }
 
 //    fun openScreen(player: PlayerEntity): Boolean {

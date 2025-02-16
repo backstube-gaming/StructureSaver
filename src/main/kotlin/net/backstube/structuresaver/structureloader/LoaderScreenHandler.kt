@@ -23,7 +23,7 @@ class LoaderScreenHandler(
         fun register() {}
         var EXTENDED_SCREEN_HANDLER: ExtendedScreenHandlerType<LoaderScreenHandler, StructureLoaderData> = Registry.register(
             Registries.SCREEN_HANDLER, Identifier(StructureSaver.MODID, "loader_handler"),
-            ExtendedScreenHandlerType<LoaderScreenHandler,StructureLoaderData>(::LoaderScreenHandler, StructureLoaderData.PACKET_CODEC)
+            ExtendedScreenHandlerType<LoaderScreenHandler, StructureLoaderData>(::LoaderScreenHandler, StructureLoaderData.PACKET_CODEC)
         )
 
         private fun getBlockEntity(world: World, pos: BlockPos): StructureLoaderBlockEntity? {
@@ -53,9 +53,6 @@ class LoaderScreenHandler(
     }
 
     fun saveToBlockEntity() {
-        blockEntity?.data?.name = this.data.name
-        blockEntity?.data?.shouldIncludeEntities = this.data.shouldIncludeEntities
-        blockEntity?.data?.pos = this.data.pos
-        blockEntity?.data?.direction = this.data.direction
+        blockEntity?.data = this.data
     }
 }

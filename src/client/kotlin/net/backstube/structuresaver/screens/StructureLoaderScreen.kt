@@ -72,7 +72,6 @@ class StructureLoaderScreen(private val handler: LoaderScreenHandler) : ScreenHa
                 handler.data.direction += 1
                 if(handler.data.direction > 3)
                     handler.data.direction = 0
-                this.updateStructureBlock(StructureBlockBlockEntity.Action.UPDATE_DATA)
             }.dimensions(this.width / 2 - 153, 120, 110, 20).build()
         )
 

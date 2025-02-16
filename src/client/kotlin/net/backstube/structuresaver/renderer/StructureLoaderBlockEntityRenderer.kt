@@ -28,6 +28,8 @@ class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context
         if (!MinecraftClient.getInstance().player!!.isCreativeLevelTwoOp && !MinecraftClient.getInstance().player!!.isSpectator) {
             return
         }
+        if(loaderBlockEntity.data == null)
+            return
         val blockPos = BlockPos(0, 1, 0)
         val x = blockPos.x.toDouble()
         val y = blockPos.y.toDouble()
@@ -37,7 +39,7 @@ class StructureLoaderBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context
         val endpointY: Double
         val endpointZ: Double
 
-        when (loaderBlockEntity.data.direction) {
+        when (loaderBlockEntity.data!!.direction) {
             0 -> { // east-south
                 endpointX = 16.0
                 endpointY = 17.0

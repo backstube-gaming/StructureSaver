@@ -1,6 +1,5 @@
 package net.backstube.structuresaver
 
-import net.backstube.structuresaver.components.StructureSaverComponents
 import net.backstube.structuresaver.networking.Packets
 import net.backstube.structuresaver.servernetworking.MessageReceiver
 import net.backstube.structuresaver.structureblock.ExporterScreenHandler
@@ -61,7 +60,7 @@ object StructureSaver : ModInitializer {
     }
 
     override fun onInitialize() {
-        StructureSaverComponents.register()
+        SSComponents.register()
         Packets.register()
         Registry.register(Registries.ITEM, Identifier(MODID, "structure_saver"), Entries.StructureSaverItem)
 

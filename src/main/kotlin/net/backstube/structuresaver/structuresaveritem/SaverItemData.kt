@@ -1,4 +1,4 @@
-package net.backstube.structuresaver.components
+package net.backstube.structuresaver.structuresaveritem
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder

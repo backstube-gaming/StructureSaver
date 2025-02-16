@@ -3,8 +3,7 @@ package net.backstube.structuresaver.structuresaveritem
 import net.backstube.structuresaver.BoundingBox
 import net.backstube.structuresaver.Exporter
 import net.backstube.structuresaver.StructureSaver
-import net.backstube.structuresaver.components.SaverItemData
-import net.backstube.structuresaver.components.StructureSaverComponents
+import net.backstube.structuresaver.SSComponents
 import net.minecraft.client.item.TooltipType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -39,10 +38,10 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         if (!context.world.isClient && player != null && player.isSneaking) {
             val stack: ItemStack = context.stack
 
-            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
+            val component = stack.get(SSComponents.SAVER_ITEM_COMPONENT)
             if (component?.position1 == null) {
                 stack.set(
-                    StructureSaverComponents.SAVER_ITEM_COMPONENT,
+                    SSComponents.SAVER_ITEM_COMPONENT,
                     SaverItemData(pos, component?.position2, component?.canSave ?: false)
                 )
                 player.sendMessage(
@@ -53,7 +52,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
             }
             if (component.position2 == null) {
                 stack.set(
-                    StructureSaverComponents.SAVER_ITEM_COMPONENT,
+                    SSComponents.SAVER_ITEM_COMPONENT,
                     SaverItemData(component.position1, pos, component.canSave)
                 )
                 player.sendMessage(
@@ -68,13 +67,13 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
 
     override fun use(world: World?, player: PlayerEntity?, hand: Hand?): TypedActionResult<ItemStack> {
         val stack: ItemStack = player!!.mainHandStack
-        val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
+        val component = stack.get(SSComponents.SAVER_ITEM_COMPONENT)
 
         if (component?.position1 != null && component.position2 != null) {
             // prevent instant save
             if (!component.canSave) {
                 stack.set(
-                    StructureSaverComponents.SAVER_ITEM_COMPONENT,
+                    SSComponents.SAVER_ITEM_COMPONENT,
                     SaverItemData(component.position1, component.position2, true)
                 )
                 return TypedActionResult.pass(stack)
@@ -101,7 +100,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         if (tooltip == null)
             return
 
-        val component = stack?.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
+        val component = stack?.get(SSComponents.SAVER_ITEM_COMPONENT)
         val pos1 = component?.position1
         if(pos1!= null){
             tooltip.add(
@@ -138,7 +137,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         private val TOOLTIP_SAVE: Text = Text.translatable("structuresaver.item.structure_saver.save.tooltip")
 
         fun getArea(stack: ItemStack): BoundingBox? {
-            val component = stack.get(StructureSaverComponents.SAVER_ITEM_COMPONENT)
+            val component = stack.get(SSComponents.SAVER_ITEM_COMPONENT)
             val pos1 = component?.position1
             val pos2 = component?.position2
             if (pos1 == null || pos2 == null) {
@@ -217,7 +216,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         }
 
         fun removeTags(stack: ItemStack): ItemStack {
-            stack.remove(StructureSaverComponents.SAVER_ITEM_COMPONENT)
+            stack.remove(SSComponents.SAVER_ITEM_COMPONENT)
             return stack
         }
     }

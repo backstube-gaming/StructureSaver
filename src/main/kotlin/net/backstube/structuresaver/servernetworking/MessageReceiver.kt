@@ -127,7 +127,7 @@ object MessageReceiver {
                 if (payload.actionName == StructureBlockBlockEntity.Action.LOAD_AREA.name) {
                     context.player().sendMessage(Text.literal("Started loading structure ..."))
                     val rotation: BlockRotation
-                    when (blockEntity.data.direction) {
+                    when (payload.data.direction) {
                         0 -> { // east-south
                             rotation = BlockRotation.NONE
                         }
@@ -146,11 +146,11 @@ object MessageReceiver {
                     }
 
 
-                    val structureId = Identifier(blockEntity.data.name)
+                    val structureId = Identifier(payload.data.name)
                     val placementData = StructurePlacementData()
                         .setPosition(BlockPos(0, 0, 0))
                         .setPlaceFluids(true)
-                        .setIgnoreEntities(!blockEntity.data.shouldIncludeEntities)
+                        .setIgnoreEntities(!payload.data.shouldIncludeEntities)
                         .setUpdateNeighbors(false)
                         .setInitializeMobs(true)
                         .setRotation(rotation)
@@ -178,6 +178,7 @@ object MessageReceiver {
 
                     if (wasPlaced) {
                         context.player().sendMessage(Text.literal("Structure $structureId was placed at $blockPos"))
+                        context.player().sendMessage(Text.literal("You might need to reload to see all changed blocks."))
                         StructureSaver.logger.info("Structure {} was placed at {}", structureId, blockPos)
                     } else {
                         context.player().sendMessage(Text.literal("Could not place structure $structureId"))
