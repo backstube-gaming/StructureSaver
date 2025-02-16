@@ -79,8 +79,6 @@ object MessageReceiver {
                 return@registerGlobalReceiver
             }
 
-            context.player().sendMessage(Text.literal("Starting export ..."))
-
             context.server().execute {
                 val blockEntity = context.player().serverWorld.getBlockEntity(payload.pos)
                 if (blockEntity !is ExtendedStructureBlockEntity)
@@ -97,6 +95,7 @@ object MessageReceiver {
                     Vec3i(Math.round(payload.size.x), Math.round(payload.size.y), Math.round(payload.size.z))
 
                 if (payload.actionName == StructureBlockBlockEntity.Action.SAVE_AREA.name) {
+                    context.player().sendMessage(Text.literal("Starting export ..."))
                     val exportPath = Exporter.export(
                         context.player().world, payload.text, payload.pos.add(payload.offset), dimensions,
                         payload.includeEntities, payload.ignoreAir, payload.saveOnServer, false
