@@ -16,12 +16,14 @@ import net.minecraft.client.gui.widget.TextFieldWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3i
 import org.joml.Vector3f
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 
-class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) : ScreenHandlerProvider<ExporterScreenHandler>,
+class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
+    ScreenHandlerProvider<ExporterScreenHandler>,
     Screen(Text.translatable(StructureSaver.Entries.ExtendedStructureBlock.translationKey)) {
 
     companion object {
@@ -159,7 +161,7 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
         inputPosZ!!.setMaxLength(15)
         inputPosZ!!.text = blockPos.z.toString()
         this.addSelectableChild(this.inputPosZ)
-        val vec3i = handler.data.size
+        val vec3i = vec3i(handler.data.size)
         this.inputSizeX = TextFieldWidget(
             this.textRenderer,
             this.width / 2 - 152,
@@ -246,6 +248,10 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
         return true
     }
 
+    private fun vec3i(vec3f: Vector3f): Vec3i {
+        return Vec3i(vec3f.x.toInt(), vec3f.y.toInt(), vec3f.z.toInt())
+    }
+
     private fun parseInt(string: String): Int {
         return try {
             string.toInt()
@@ -302,7 +308,7 @@ class ExtendedStructureBlockScreen(private val handler: ExporterScreenHandler) :
         inputSizeZ!!.render(context, mouseX, mouseY, delta)
 
         val explanationLines = Text.translatable("structuresaver.structure_export_block.explanation").string.split("\n")
-        for((index, line) in explanationLines.withIndex()){
+        for ((index, line) in explanationLines.withIndex()) {
             context.drawTextWithShadow(
                 this.textRenderer, Text.literal(line),
                 this.width / 2 - 85, 174 + index * 10, 10526880
