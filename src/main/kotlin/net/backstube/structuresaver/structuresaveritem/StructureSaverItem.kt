@@ -4,27 +4,18 @@ import net.backstube.structuresaver.BoundingBox
 import net.backstube.structuresaver.Exporter
 import net.backstube.structuresaver.StructureSaver
 import net.backstube.structuresaver.SSComponents
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.client.item.TooltipType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemUsageContext
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtHelper
-import net.minecraft.nbt.NbtIo
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
-import java.nio.file.attribute.BasicFileAttributes
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -153,7 +144,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
         }
 
         fun saveSchematic(
-            world: World,
+            context: ServerPlayNetworking.Context,
             stack: ItemStack,
             includeEntities: Boolean,
             ignoreAir: Boolean,
@@ -165,7 +156,7 @@ class StructureSaverItem(settings: Settings?) : Item(settings) {
             val bounds = BlockPos(boundingBox.span.x + 1, boundingBox.span.y + 1, boundingBox.span.z + 1)
             val dimensions = bounds.subtract(origin)
             val exportPath = Exporter.export(
-                world, name, origin, dimensions,
+                context, name, origin, dimensions,
                 includeEntities, ignoreAir, saveOnServer, false
             )
             return exportPath?.fileName.toString()

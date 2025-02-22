@@ -2,6 +2,7 @@ package net.backstube.structuresaver.servernetworking
 
 import net.backstube.structuresaver.Exporter
 import net.backstube.structuresaver.StructureSaver
+import net.backstube.structuresaver.TextStyles
 import net.backstube.structuresaver.networking.*
 import net.backstube.structuresaver.structureblock.ExtendedStructureBlockEntity
 import net.backstube.structuresaver.structureloader.StructureLoaderBlockEntity
@@ -47,7 +48,7 @@ object MessageReceiver {
 
             context.server().execute {
                 val savedName = StructureSaverItem.saveSchematic(
-                    context.player().world,
+                    context,
                     payload.itemStack,
                     payload.includeEntities,
                     payload.ignoreAir,
@@ -98,10 +99,11 @@ object MessageReceiver {
                     val path = Exporter.getExportPath(payload.text)
                     context.player().sendMessage(Text.literal("Exporting $path with includeEntities=${payload.ignoreAir},includeEntities=${payload.ignoreAir}"))
                     val exportPath = Exporter.export(
-                        context.player().world, payload.text, payload.pos.add(payload.offset), dimensions,
+                        context, payload.text, payload.pos.add(payload.offset), dimensions,
                         payload.includeEntities, payload.ignoreAir, payload.saveOnServer, false
                     )
-                    context.player().sendMessage(Text.literal("Saved to '$exportPath'"))
+                    if(exportPath != null)
+                        context.player().sendMessage(Text.literal("Saved to '$exportPath'").setStyle(TextStyles.green))
                 }
             }
         }
